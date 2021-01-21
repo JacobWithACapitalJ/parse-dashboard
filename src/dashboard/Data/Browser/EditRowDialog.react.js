@@ -94,12 +94,13 @@ export default class EditRowDialog extends React.Component {
       selectedObject,
       className,
       updateRow,
-      confirmAttachSelectedRows
+      confirmAttachSelectedRows,
+      useMasterKey
     } = this.props;
     if (type === 'Relation') {
       if (toDelete.length > 0) {
         selectedObject[name].remove(toDelete);
-        selectedObject[name].parent.save(null, { useMasterKey: true });
+        selectedObject[name].parent.save(null, { useMasterKey: useMasterKey });
       }
       if (newValue.length > 0) {
         confirmAttachSelectedRows(
@@ -163,7 +164,7 @@ export default class EditRowDialog extends React.Component {
   }
 
   render() {
-    const { selectedObject, className, columns, onClose, schema } = this.props;
+    const { selectedObject, className, columns, onClose, schema, useMasterKey } = this.props;
     const { currentObject, openObjectPickers } = this.state;
 
     const fields = columns.map(column => {
@@ -290,6 +291,7 @@ export default class EditRowDialog extends React.Component {
                   this.handleChange(newValue, name, type, targetClass)
                 }
                 onCancel={() => this.toggleObjectPicker(name, false)}
+                useMasterKey={useMasterKey}
               />
           ) : (
             <div
@@ -328,6 +330,7 @@ export default class EditRowDialog extends React.Component {
                   this.handleChange(newValue, name, type, targetClass, toDelete)
                 }
                 onCancel={() => this.toggleObjectPicker(name, false)}
+                useMasterKey={useMasterKey}
               />
           ) : (
             selectedObject.id && (
