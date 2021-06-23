@@ -125,6 +125,16 @@ let BrowserToolbar = ({
         <Separator />
         <MenuItem
           disabled={!selectionLength}
+          text={`Export ${selectionLength <= 1 ? 'this row' : 'these rows'} to CSV`}
+          onClick={() => onExportSelectedRows(selection)}
+        />
+        <MenuItem
+          text={`Export all rows to CSV`}
+          onClick={() => onExportSelectedRows({ '*': true })}
+        />
+        <Separator />
+        <MenuItem
+          disabled={!selectionLength}
           text={`Attach ${selectionLength <= 1 ? 'this row' : 'these rows'} to relation`}
           onClick={onAttachSelectedRows}
         />

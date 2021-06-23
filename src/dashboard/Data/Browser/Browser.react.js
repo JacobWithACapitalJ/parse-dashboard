@@ -20,6 +20,7 @@ import AttachRowsDialog                   from 'dashboard/Data/Browser/AttachRow
 import AttachSelectedRowsDialog           from 'dashboard/Data/Browser/AttachSelectedRowsDialog.react';
 import CloneSelectedRowsDialog            from 'dashboard/Data/Browser/CloneSelectedRowsDialog.react';
 import EditRowDialog                      from 'dashboard/Data/Browser/EditRowDialog.react';
+import ExportSelectedRowsDialog           from 'dashboard/Data/Browser/ExportSelectedRowsDialog.react';
 import history                            from 'dashboard/history';
 import { List, Map }                      from 'immutable';
 import Notification                       from 'dashboard/Data/Browser/Notification.react';
@@ -59,6 +60,7 @@ class Browser extends DashboardView {
       showAttachRowsDialog: false,
       showEditRowDialog: false,
       rowsToDelete: null,
+      rowsToExport: null,
 
       relation: null,
       counts: {},
@@ -103,6 +105,9 @@ class Browser extends DashboardView {
     this.showAttachSelectedRowsDialog = this.showAttachSelectedRowsDialog.bind(this);
     this.confirmAttachSelectedRows = this.confirmAttachSelectedRows.bind(this);
     this.cancelAttachSelectedRows = this.cancelAttachSelectedRows.bind(this);
+    this.showExportSelectedRowsDialog = this.showExportSelectedRowsDialog.bind(this);
+    this.confirmExportSelectedRows = this.confirmExportSelectedRows.bind(this);
+    this.cancelExportSelectedRows = this.cancelExportSelectedRows.bind(this);
     this.showCloneSelectedRowsDialog = this.showCloneSelectedRowsDialog.bind(this);
     this.confirmCloneSelectedRows = this.confirmCloneSelectedRows.bind(this);
     this.cancelCloneSelectedRows = this.cancelCloneSelectedRows.bind(this);
@@ -757,9 +762,70 @@ class Browser extends DashboardView {
       this.state.showAttachSelectedRowsDialog ||
       this.state.showCloneSelectedRowsDialog ||
       this.state.showEditRowDialog ||
-      this.state.showPermissionsDialog
+      this.state.showPermissionsDialog ||
+      this.state.showExportSelectedRowsDialog
     );
   }
+
+  showExportSelectedRowsDialog(rows) {
+    this.setState({
+      rowsToExport: rows,
+    });
+  }
+
+  cancelExportSelectedRows() {
+    this.setState({
+      rowsToExport: null,
+    });
+  }
+
+  async confirmExportSelectedRows(rows) {
+    this.setState({ rowsToExport: null });
+    const className = this.props.params.className;
+    const query = new Parse.Query(className);
+
+    if (rows['*']) {
+      // Export all
+      query.limit(10000);
+    } else {
+      // Export selected
+      const objectIds = [];
+      for (const objectId in this.state.rowsToExport) {
+        objectIds.push(objectId);
+      }
+      query.containedIn('objectId', objectIds);
+    }
+
+    const columns = this.getClassColumns(className, false);
+    const objects = await query.find({useMasterKey: true});
+    let csvString = columns.map(column => column.name).join(',') + '\n';
+    for (const object of objects) {
+      let row = columns.map(column => {
+        if (column.name === 'objectId') {
+          return object.id;
+        } else if (column.type === 'Relation' || column.type === 'Pointer') {
+          if (object.get(column.name)) {
+            return  object.get(column.name).id
+            } else {
+            return 'undefined'
+            }; 
+        } else {
+          return `"${object.get(column.name)}"`;
+        }
+      }).join(',');
+      csvString += row + '\n';
+    }
+
+    // Deliver to browser to download file
+    const element = document.createElement("a");
+    const file = new Blob([csvString], {type: 'text/csv'});
+    element.href = URL.createObjectURL(file);
+    element.download = `${className}.csv`;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    document.body.removeChild(element);
+  }
+
 
   showAttachRowsDialog() {
     this.setState({
@@ -1223,6 +1289,15 @@ class Browser extends DashboardView {
           useMasterKey={this.state.useMasterKey}
         />
       )
+    } else if (this.state.rowsToExport) {
+      extras = (
+        <ExportSelectedRowsDialog
+          className={SpecialClasses[className] || className}
+          selection={this.state.rowsToExport}
+          onCancel={this.cancelExportSelectedRows}
+          onConfirm={() => this.confirmExportSelectedRows(this.state.rowsToExport)}
+        />
+      );
     }
 
     let notification = null;
