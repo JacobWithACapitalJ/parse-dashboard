@@ -10,8 +10,7 @@ export default class LoginDialog extends React.Component {
     super(props);
     this.state = {
       open: false,
-      username: '',
-      password: ''
+      userId: '',
     };
 
     this.handleOpen = this.handleOpen.bind(this);
@@ -25,14 +24,14 @@ export default class LoginDialog extends React.Component {
   }
 
   handleClose() {
-    this.setState({ username: '', password: '', open: false });
+    this.setState({ userId: '', open: false });
   }
 
   async login() {
-    const { username, password } = this.state;
-    if (!!username && !!password) {
+    const { userId } = this.state;
+    if (!!userId) {
       try {
-        await this.props.login(username, password);
+        await this.props.login(userId);
         this.handleClose();
       } catch (error) {
         this.setState({ error: error.message });
@@ -77,26 +76,14 @@ export default class LoginDialog extends React.Component {
           cancelText="Cancel"
         >
           <LoginRow
-            label="Username"
+            label="UserId"
             input={
               <input
                 onChange={e =>
-                  this.setState({ username: e.nativeEvent.target.value })
+                  this.setState({ userId: e.nativeEvent.target.value })
                 }
                 onKeyDown={this.handleKeyDown}
                 autoFocus
-              />
-            }
-          />
-          <LoginRow
-            label="Password"
-            input={
-              <input
-                onChange={e =>
-                  this.setState({ password: e.nativeEvent.target.value })
-                }
-                type="password"
-                onKeyDown={this.handleKeyDown}
               />
             }
           />

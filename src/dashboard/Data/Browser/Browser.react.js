@@ -246,12 +246,17 @@ class Browser extends DashboardView {
     this.setState({ showExportDialog: true });
   }
 
-  async login(username, password) {
+  async login(userId) {
     if (Parse.User.current()) {
       await Parse.User.logOut();
     }
+    const sessionObject = new Parse.Session()
+    const q = new Parse.Query(sessionObject)
+    q.equalTo("user", Parse.User.createWithoutData(userId))
+    const session = await q.first({useMasterKey: true})
 
-    const currentUser = await Parse.User.logIn(username, password);
+    const currentUser = await Parse.User.become(session.get("sessionToken"));
+
     this.setState({ currentUser: currentUser, useMasterKey: false }, () => this.refresh());
   }
 
