@@ -112,17 +112,17 @@ let BrowserToolbar = ({
   } else if (onAddRow) {
     menu = (
       <BrowserMenu title='Edit' icon='edit-solid' disabled={isUnique}>
-        <MenuItem text='Add a row' onClick={onAddRow} />
+        {/* <MenuItem text='Add a row' onClick={onAddRow} />
         <MenuItem text='Add a row with modal' onClick={onAddRowWithModal} />
         {enableColumnManipulation ? <MenuItem text='Add a column' onClick={onAddColumn} /> : <noscript />}
         {enableClassManipulation ? <MenuItem text='Add a class' onClick={onAddClass} /> : <noscript />}
-        <Separator />
-        <MenuItem
+        <Separator /> */}
+        {/* <MenuItem
           disabled={selectionLength !== 1}
           text={'Edit this row with modal'}
           onClick={onEditSelectedRow}
-        />
-        <Separator />
+        /> */}
+        {/* <Separator /> */}
         <MenuItem
           disabled={!selectionLength}
           text={`Export ${selectionLength <= 1 ? 'this row' : 'these rows'} to CSV`}
@@ -132,7 +132,7 @@ let BrowserToolbar = ({
           text={`Export all rows to CSV`}
           onClick={() => onExportSelectedRows({ '*': true })}
         />
-        <Separator />
+        {/* <Separator />
         <MenuItem
           disabled={!selectionLength}
           text={`Attach ${selectionLength <= 1 ? 'this row' : 'these rows'} to relation`}
@@ -143,15 +143,15 @@ let BrowserToolbar = ({
           disabled={!selectionLength}
           text={`Clone ${selectionLength <= 1 ? 'this row' : 'these rows'}`}
           onClick={onCloneSelectedRows}
-        />
-        <Separator />
-        <MenuItem
+        /> */}
+        {/* <Separator /> */}
+        {/* <MenuItem
           disabled={selectionLength === 0}
           text={selectionLength === 1 && !selection['*'] ? 'Delete this row' : 'Delete these rows'}
-          onClick={() => onDeleteRows(selection)} />
-        {enableColumnManipulation ? <MenuItem text='Delete a column' onClick={onRemoveColumn} /> : <noscript />}
+          onClick={() => onDeleteRows(selection)} /> */}
+        {/* {enableColumnManipulation ? <MenuItem text='Delete a column' onClick={onRemoveColumn} /> : <noscript />}
         {enableDeleteAllRows ? <MenuItem text='Delete all rows' onClick={() => onDeleteRows({ '*': true })} /> : <noscript />}
-        {enableClassManipulation ? <MenuItem text='Delete this class' onClick={onDropClass} /> : <noscript />}
+        {enableClassManipulation ? <MenuItem text='Delete this class' onClick={onDropClass} /> : <noscript />} */}
         {enableExportClass ? <Separator /> : <noscript />}
         {enableExportClass ? <MenuItem text='Export this data' onClick={onExport} /> : <noscript />}
       </BrowserMenu>
