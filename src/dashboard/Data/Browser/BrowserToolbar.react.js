@@ -52,7 +52,7 @@ let BrowserToolbar = ({
   handleColumnDragDrop,
   handleColumnsOrder,
   order,
-
+  onExportSelectedRows,
   enableDeleteAllRows,
   enableExportClass,
   enableSecurityDialog,
