@@ -144,11 +144,11 @@ let BrowserToolbar = ({
           text={`Clone ${selectionLength <= 1 ? 'this row' : 'these rows'}`}
           onClick={onCloneSelectedRows}
         /> */}
-        {/* <Separator /> */}
-        {/* <MenuItem
+        <Separator />
+        <MenuItem
           disabled={selectionLength === 0}
           text={selectionLength === 1 && !selection['*'] ? 'Delete this row' : 'Delete these rows'}
-          onClick={() => onDeleteRows(selection)} /> */}
+          onClick={() => onDeleteRows(selection)} />
         {/* {enableColumnManipulation ? <MenuItem text='Delete a column' onClick={onRemoveColumn} /> : <noscript />}
         {enableDeleteAllRows ? <MenuItem text='Delete all rows' onClick={() => onDeleteRows({ '*': true })} /> : <noscript />}
         {enableClassManipulation ? <MenuItem text='Delete this class' onClick={onDropClass} /> : <noscript />} */}
